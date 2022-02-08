@@ -12,6 +12,14 @@ const intervalId = ref('')
 /**
  * Computed Properties
  */
+const displayTimeText = computed(() => {
+  if (props.task.remaining >= 0) {
+    return 'Time Remaining'
+  } else {
+    return 'Additional Time Spent'
+  }
+})
+
 const estimateAnalysis = computed(() => {
   if (props.task.completion && props.task.estimate) {
     const timeDiff = props.task.completion - props.task.estimate
@@ -81,7 +89,8 @@ const stopTimer = () => {
         min
       </div>
       <div style="margin-bottom: 15px">
-        <strong>Remaining Time</strong>:
+        <strong>{{ displayTimeText }}</strong
+        >:
         {{ generateTimeStamp }}
       </div>
       <button @click="startTimer">Start</button>
