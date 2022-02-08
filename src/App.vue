@@ -1,12 +1,14 @@
 <script setup>
 import { ref } from 'vue'
+import { useStorage } from '@vueuse/core'
 
 const newTaskTitle = ref('')
-const taskList = ref([])
+const taskList = useStorage('task-list', [])
 
 const addTask = () => {
   taskList.value.push({
-    title: newTaskTitle.value
+    title: newTaskTitle.value,
+    estimate: 0
   })
   newTaskTitle.value = ''
 }
@@ -14,7 +16,7 @@ const addTask = () => {
 
 <template>
   <main class="container">
-    <h1>Effortless Estimates</h1>
+    <h1 style="margin-top: 20px">Effortless Estimates</h1>
     <h2>New Task</h2>
     <form @submit.prevent>
       <label for="new-task-title">
@@ -30,12 +32,43 @@ const addTask = () => {
       </label>
     </form>
     <h2>Tasks</h2>
-    <ul>
-      <li v-for="(task, index) in taskList" :key="`task-${index}`">
-        {{ task.title }}
+    <ul class="task-list">
+      <li
+        v-for="(task, index) in taskList"
+        :key="`task-${index}`"
+        class="task-list-item"
+      >
+        <article class="task-card">
+          <p style="flex: 1; margin: 0">{{ task.title }}</p>
+          <input
+            type="number"
+            style="width: 80px; margin: 0; margin-right: 10px"
+            v-model="task.estimate"
+          />
+          min
+        </article>
       </li>
     </ul>
   </main>
 </template>
 
-<style></style>
+<style scoped>
+h1 {
+  --typography-spacing-vertical: 20px;
+}
+
+h2 {
+  --typography-spacing-vertical: 10px;
+}
+
+.task-card {
+  display: flex;
+  align-items: center;
+}
+.task-list {
+  padding: 0;
+}
+.task-list-item {
+  list-style: none;
+}
+</style>
