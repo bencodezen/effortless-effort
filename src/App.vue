@@ -1,21 +1,41 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue'
+
+const newTaskTitle = ref('')
+const taskList = ref([])
+
+const addTask = () => {
+  taskList.value.push({
+    title: newTaskTitle.value
+  })
+  newTaskTitle.value = ''
+}
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + Vite" />
+  <main class="container">
+    <h1>Effortless Estimates</h1>
+    <h2>New Task</h2>
+    <form @submit.prevent>
+      <label for="new-task-title">
+        New Task Title
+        <input
+          type="text"
+          id="new-task-title"
+          name="new-task-title"
+          placeholder="Placeholder task title"
+          v-model="newTaskTitle"
+          @keyup.enter="addTask"
+        />
+      </label>
+    </form>
+    <h2>Tasks</h2>
+    <ul>
+      <li v-for="(task, index) in taskList" :key="`task-${index}`">
+        {{ task.title }}
+      </li>
+    </ul>
+  </main>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>
