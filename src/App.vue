@@ -1,12 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useStorage } from '@vueuse/core'
-import minutesToSeconds from 'date-fns/minutesToSeconds'
-import intervalToDuration from 'date-fns/intervalToDuration'
+import TaskCard from './components/TaskCard.vue'
 
 const newTaskTitle = ref('')
 const taskList = useStorage('task-list', [])
-const intervalId = ref('')
 
 const addTask = () => {
   taskList.value.push({
@@ -15,29 +13,6 @@ const addTask = () => {
     remaining: 0
   })
   newTaskTitle.value = ''
-}
-
-const generateTimeStamp = task => {
-  const remainingTimeLabel = intervalToDuration({
-    start: 0,
-    end: task.remaining * 1000
-  })
-
-  return `${remainingTimeLabel.hours}h ${remainingTimeLabel.minutes}m ${remainingTimeLabel.seconds}s`
-}
-
-const startTimer = task => {
-  if (!task.remaining) {
-    task.remaining = minutesToSeconds(task.estimate)
-  }
-
-  intervalId.value = setInterval(() => {
-    task.remaining--
-  }, 1000)
-}
-
-const stopTimer = () => {
-  clearInterval(intervalId.value)
 }
 </script>
 
@@ -65,25 +40,7 @@ const stopTimer = () => {
         :key="`task-${index}`"
         class="task-list-item"
       >
-        <article class="task-card">
-          <p style="flex: 1; margin: 0">{{ task.title }}</p>
-          <div>
-            <div style="margin-bottom: 15px">
-              <input
-                type="number"
-                style="width: 80px; margin: 0; margin-right: 10px"
-                v-model="task.estimate"
-              />
-              min
-            </div>
-            <div style="margin-bottom: 15px">
-              <strong>Remaining Time</strong>:
-              {{ generateTimeStamp(task) }}
-            </div>
-            <button @click="startTimer(task)">Start</button>
-            <button @click="stopTimer" class="secondary">Stop</button>
-          </div>
-        </article>
+        <TaskCard :task="task" />
       </li>
     </ul>
   </main>
@@ -98,10 +55,6 @@ h2 {
   --typography-spacing-vertical: 10px;
 }
 
-.task-card {
-  display: flex;
-  align-items: center;
-}
 .task-list {
   padding: 0;
 }
