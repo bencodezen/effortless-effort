@@ -10,7 +10,8 @@ const addTask = () => {
   taskList.value.push({
     title: newTaskTitle.value,
     estimate: 0,
-    remaining: 0
+    remaining: 0,
+    completion: 0
   })
   newTaskTitle.value = ''
 }

@@ -9,6 +9,23 @@ const props = defineProps({
 
 const intervalId = ref('')
 
+/**
+ * Computed Properties
+ */
+const estimateAnalysis = computed(() => {
+  if (props.task.completion && props.task.estimate) {
+    const timeDiff = props.task.completion - props.task.estimate
+    const timeDiffDetails = intervalToDuration({
+      start: 0,
+      end: timeDiff * 1000
+    })
+
+    return `${timeDiffDetails.hours}h ${timeDiffDetails.minutes}m ${timeDiffDetails.seconds}s`
+  } else {
+    return false
+  }
+})
+
 const generateTimeStamp = computed(() => {
   const remainingTimeLabel = intervalToDuration({
     start: 0,
@@ -17,6 +34,13 @@ const generateTimeStamp = computed(() => {
 
   return `${remainingTimeLabel.hours}h ${remainingTimeLabel.minutes}m ${remainingTimeLabel.seconds}s`
 })
+
+/**
+ * Methods
+ */
+const completeTask = () => {
+  props.task.completion = props.task.remaining
+}
 
 const startTimer = () => {
   if (!props.task.remaining) {
@@ -35,7 +59,18 @@ const stopTimer = () => {
 
 <template>
   <article class="task-card">
-    <p style="flex: 1; margin: 0">{{ task.title }}</p>
+    <div style="flex: 1">
+      <p style="flex: 1; margin: 0; font-size: 1.5rem; font-weight: bold">
+        {{ task.title }}
+      </p>
+      <p v-if="task.completion">Completed: {{ task.completion }}</p>
+      <p
+        v-if="estimateAnalysis"
+        :style="`color: ${task.completion > 0 ? 'green' : 'red'}`"
+      >
+        Status: {{ estimateAnalysis }}
+      </p>
+    </div>
     <div>
       <div style="margin-bottom: 15px">
         <input
@@ -51,6 +86,7 @@ const stopTimer = () => {
       </div>
       <button @click="startTimer">Start</button>
       <button @click="stopTimer" class="secondary">Stop</button>
+      <button @click="completeTask" class="contrast">Complete</button>
     </div>
   </article>
 </template>
